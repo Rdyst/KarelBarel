@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Karelson</title>
+    <style>
+          body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: row;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+        }
+
+        #sidebar {
+            width: 300px;
+            background-color: #f4f4f9;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            overflow-y: auto;
+        }
+
+        #commands {
+            width: 100%;
+            height: 150px;
+            margin-bottom: 10px;
+        }
+
+        #history {
+            margin-top: 20px;
+            text-align: left;
+            background: #fff;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            margin-top: 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #main {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background-color: #eef2f3;
+        }
+
+        #game-container {
+            display: grid;
+            grid-template-columns: repeat(10, 40px);
+            grid-template-rows: repeat(10, 40px);
+            gap: 5px;
+            justify-content: center;
+            background-color: #ccc;
+            padding: 10px;
+            border-radius: 15px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+
+        .cell {
+            width: 40px;
+            height: 40px;
+            background-color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #ddd;
+            position: relative;
+            border-radius: 10px;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .karel {
+            background-color: lightblue;
+            border-radius: 10px;
+        }
+
+        .karel::after {
+            content: '';
+            position: absolute;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 8px;
+            border-color: transparent;
+        }
+
+        .karel[data-direction="right"]::after {
+            border-left-color: black;
+            transform: translateX(8px);
+        }
+
+        .karel[data-direction="left"]::after {
+            border-right-color: black;
+            transform: translateX(-8px);
+        }
+
+        .karel[data-direction="up"]::after {
+            border-bottom-color: black;
+            transform: translateY(-8px);
+        }
+
+        .karel[data-direction="down"]::after {
+            border-top-color: black;
+            transform: translateY(8px);
+        }
+
+        .highlighted-yellow {
+            background-color: yellow;
+        }
+
+        .highlighted-red {
+            background-color: red;
+        }
+
+        .highlighted-green {
+            background-color: green;
+        }
+
+        .highlighted-blue {
+            background-color: blue;
+        }
+
+        #output {
+            margin-top: 20px;
+            white-space: pre-wrap;
+            text-align: left;
+            width: 300px;
+            margin: auto;
+        }
+
+        #command-list {
+            margin-top: 20px;
+        }
+
+        #command-list table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        #command-list th, #command-list td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        #command-list th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div id="sidebar">
+        <h1>Karel neni Barel</h1>
+        <textarea id="commands" placeholder="Zadejte příkazy"></textarea>
+        <button onclick="executeCommands()">Spustit</button>
+        <button onclick="resetGame()">Reset</button>
+        <div id="command-list">
+            <h3>Seznam příkazů:</h3>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Příkaz</th>
+                        <th>Popis</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>KROK [n]</td>
+                        <td>Pohyb o n kroků (výchozí: 1)</td>
+                    </tr>
+                    <tr>
+                        <td>VLEVOBOK [n]</td>
+                        <td>Otočí Karla vlevo n-krát</td>
+                    </tr>
+                    <tr>
+                        <td>POLOZ [A]</td>
+                        <td>Položí položku A na aktuální pozici</td>
+                    </tr>
+                    <tr>
+                        <td>ERASE</td>
+                        <td>Smaže položku na aktuální pozici</td>
+                    </tr>
+                    <tr>
+                        <td>ZVYRAZNI [BARVA]</td>
+                        <td>Zvýrazní aktuální políčko vybranou barvou (YELLOW, RED, GREEN, BLUE)</td>
+                    </tr>
+                    <tr>
+                        <td>RESET</td>
+                        <td>Resetuje hru</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div id="history">
+            <h3>Historie příkazů:</h3>
+            <ul id="history-list"></ul>
+        </div>
+    </div>
+    <div id="main">
+        <div id="game-container"></div>
+        <div id="output"></div>
+    </div>
+
+    <script>
+        const GRID_SIZE = 10;
+        const gameContainer = document.getElementById('game-container');
+        const output = document.getElementById('output');
+        const commandsInput = document.getElementById('commands');
+        const historyList = document.getElementById('history-list');
+
+        let karel = { x: 0, y: 0, direction: 'right' }; // initial position and direction
+        let grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
+
+        function createGrid() {
+            gameContainer.innerHTML = '';
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.id = `cell-${x}-${y}`;
+                    gameContainer.appendChild(cell);
+                }
+            }
+            updateKarelPosition();
+        }
+
+        function updateKarelPosition() {
+            document.querySelectorAll('.cell').forEach(cell => {
+                cell.classList.remove('karel');
+                cell.removeAttribute('data-direction');
+            });
+            const karelCell = document.getElementById(`cell-${karel.x}-${karel.y}`);
+            if (karelCell) {
+                karelCell.classList.add('karel');
+                karelCell.setAttribute('data-direction', karel.direction);
+            }
+        }
+
+        function resetGame() {
+            karel = { x: 0, y: 0, direction: 'right' };
+            grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
+            createGrid();
+            output.textContent = '';
+            commandsInput.value = '';
+            historyList.innerHTML = '';
+        }
+
+        function executeCommands() {
+            const commands = commandsInput.value.split('\n').map(cmd => cmd.trim().toUpperCase());
+            output.textContent = '';
+            for (const command of commands) {
+                processCommand(command);
+                addToHistory(command);
+            }
+            updateKarelPosition();
+        }
+
+        function addToHistory(command) {
+            const li = document.createElement('li');
+            li.textContent = command;
+            historyList.appendChild(li);
+        }
+
+        function processCommand(command) {
+            switch (true) {
+                case command.startsWith('KROK'):
+                    const steps = parseInt(command.split(' ')[1]) || 1;
+                    moveKarel(steps);
+                    break;
+                case command.startsWith('VLEVOBOK'):
+                    const turns = parseInt(command.split(' ')[1]) || 1;
+                    turnLeft(turns);
+                    break;
+                case command.startsWith('POLOZ'):
+                    const item = command.split(' ')[1] || '';
+                    placeItem(item);
+                    break;
+                case command === 'ERASE':
+                    eraseItem();
+                    break;
+                case command.startsWith('ZVYRAZNI'):
+                    const color = command.split(' ')[1] || 'YELLOW';
+                    highlightCell(color);
+                    break;
+                case command === 'RESET':
+                    resetGame();
+                    break;
+                default:
+                    output.textContent += `Neznámý příkaz: ${command}\n`;
+                    break;
+            }
+        }
+
+        function moveKarel(steps) {
+            for (let i = 0; i < steps; i++) {
+                if (karel.direction === 'right' && karel.x < GRID_SIZE - 1) karel.x++;
+                else if (karel.direction === 'left' && karel.x > 0) karel.x--;
+                else if (karel.direction === 'down' && karel.y < GRID_SIZE - 1) karel.y++;
+                else if (karel.direction === 'up' && karel.y > 0) karel.y--;
+                else {
+                    output.textContent += `Karel narazil na hranici pole!\n`;
+                    break;
+                }
+            }
+        }
+
+        function turnLeft(turns) {
+            const directions = ['right', 'up', 'left', 'down'];
+            let currentIndex = directions.indexOf(karel.direction);
+            karel.direction = directions[(currentIndex + turns) % 4];
+        }
+
+        function placeItem(item) {
+            grid[karel.y][karel.x] = item;
+            const cell = document.getElementById(`cell-${karel.x}-${karel.y}`);
+            if (cell) {
+                cell.textContent = item;
+            }
+        }
+
+        function eraseItem() {
+            grid[karel.y][karel.x] = null;
+            const cell = document.getElementById(`cell-${karel.x}-${karel.y}`);
+            if (cell) {
+                cell.textContent = '';
+            }
+        }
+
+        function highlightCell(color) {
+            const cell = document.getElementById(`cell-${karel.x}-${karel.y}`);
+            if (cell) {
+                cell.classList.remove('highlighted-yellow', 'highlighted-red', 'highlighted-green', 'highlighted-blue');
+                if (color === 'RED') {
+                    cell.classList.add('highlighted-red');
+                } else if (color === 'GREEN') {
+                    cell.classList.add('highlighted-green');
+                } else if (color === 'BLUE') {
+                    cell.classList.add('highlighted-blue');
+                } else {
+                    cell.classList.add('highlighted-yellow');
+                }
+            }
+        }
+
+        // Initialize game
+        createGrid();
+    </script>
+</body>
+</html>
