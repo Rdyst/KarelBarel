@@ -16,7 +16,7 @@ Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
 4. **Interaktivní UI**: Uživatelé mohou zadávat příkazy do textového pole a okamžitě vidět výsledky.
 5. **Chyby**: Zobrazuji se zprávy pro neznámé příkazy nebo pohyby mimo hranice gridu.
 
-## Klíčové části kódu
+## Kod
 
 ### Zpracování příkazů pomocí `switch`
 Místo více `if-else` bloků jsou příkazy zpracovávány pomocí struktury `switch` pro větší přehlednost a rychlost myslim 
@@ -66,13 +66,21 @@ function processCommand(command) {
 Políčka lze zvýraznit několika barvami, včetně `YELLOW`, `RED`, `GREEN` a `BLUE`:
 
 ```javascript
-function highlightCell(color) {
-    const cell = document.getElementById(`cell-${karel.x}-${karel.y}`);
-    if (cell) {
-        cell.classList.remove('highlighted-yellow', 'highlighted-red', 'highlighted-green', 'highlighted-blue');
-        cell.classList.add(`highlighted-${color.toLowerCase()}`);
-    }
-}
+ function highlightCell(color) {
+            const cell = document.getElementById(`cell-${karel.x}-${karel.y}`);
+            if (cell) {
+                cell.classList.remove('highlighted-yellow', 'highlighted-red', 'highlighted-green', 'highlighted-blue');
+                if (color === 'RED') {
+                    cell.classList.add('highlighted-red');
+                } else if (color === 'GREEN') {
+                    cell.classList.add('highlighted-green');
+                } else if (color === 'BLUE') {
+                    cell.classList.add('highlighted-blue');
+                } else {
+                    cell.classList.add('highlighted-yellow');
+                }
+            }
+        }
 ```
 
 ### Inicializace gridu
@@ -80,15 +88,18 @@ Grid je dynamicky vytvořen a aktualizován při pohybu Karla:
 
 ```javascript
 function createGrid() {
-    gameContainer.innerHTML = '';
-    for (let y = 0; y < GRID_SIZE; y++) {
-        for (let x = 0; x < GRID_SIZE; x++) {
-            const cell = document.createElement('div');
-            cell.classList.add('cell');
-            cell.id = `cell-${x}-${y}`;
-            gameContainer.appendChild(cell);
-        }
-    }
+            gameContainer.innerHTML = '';
+            gameContainer.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 40px)`;
+            gameContainer.style.gridTemplateRows = `repeat(${GRID_SIZE}, 40px)`;
+            grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
+            for (let y = 0; y < GRID_SIZE; y++) {
+                for (let x = 0; x < GRID_SIZE; x++) {
+                    const cell = document.createElement('div');
+                    cell.classList.add('cell');
+                    cell.id = `cell-${x}-${y}`;
+                    gameContainer.appendChild(cell);
+                }
+            }
     updateKarelPosition();
 }
 ```
