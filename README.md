@@ -4,7 +4,7 @@ Tenhle projekt je vzdelavaci (robot?) jménem Karel kterej neni barel. Mužete z
 Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
 ## Funkce
 
-1. **Navigace na mřížce**: Karel operuje na mřížce 10x10 a pohybuje se krok za krokem podle zadaných příkazů.
+1. **Navigace na mřížce**: Karel operuje na gridu 10x10 a pohybuje se krok za krokem podle zadaných příkazů.
 2. **Příkazy**:
    - `KROK [n]`: Pohne Karlem o `n` kroků vpřed (výchozí: 1).
    - `VLEVOBOK [n]`: Otočí Karla vlevo `n`krát.
@@ -14,7 +14,7 @@ Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
    - `RESET`: Resetuje mřížku a pozici Karla.
 3. **Historie příkazů**: Zobrazuje seznam vykonaných příkazů.
 4. **Interaktivní UI**: Uživatelé mohou zadávat příkazy do textového pole a okamžitě vidět výsledky.
-5. **Ošetření chyb**: Zobrazuje zprávy pro neznámé příkazy nebo pohyby mimo hranice gridu.
+5. **Chyby**: Zobrazuji se zprávy pro neznámé příkazy nebo pohyby mimo hranice gridu.
 
 ## Klíčové části kódu
 
@@ -68,7 +68,7 @@ function highlightCell(color) {
 ```
 
 ### Inicializace gridu
-Grid je dynamicky vytvořena a aktualizována při pohybu Karla:
+Grid je dynamicky vytvořen a aktualizován při pohybu Karla:
 
 ```javascript
 function createGrid() {
