@@ -236,7 +236,7 @@
         const commandsInput = document.getElementById('commands');
         const historyList = document.getElementById('history-list');
 
-        let karel = { x: 0, y: 0, direction: 'right' }; // initial position and direction
+        let karel = { x: 0, y: 0, direction: 'right' }; 
         let grid = [];
 
         function setGridSize() {
@@ -295,24 +295,40 @@
         }
 
         function processCommand(command) {
-            if (command.startsWith('KROK')) {
-                const steps = parseInt(command.split(' ')[1]) || 1;
-                moveKarel(steps);
-            } else if (command.startsWith('VLEVOBOK')) {
-                const turns = parseInt(command.split(' ')[1]) || 1;
-                turnLeft(turns);
-            } else if (command.startsWith('POLOZ')) {
-                const item = command.split(' ')[1] || '';
-                placeItem(item);
-            } else if (command === 'ERASE') {
-                eraseItem();
-            } else if (command.startsWith('ZVYRAZNI')) {
-                const color = command.split(' ')[1] || 'YELLOW';
-                highlightCell(color);
-            } else if (command === 'RESET') {
-                resetGame();
-            } else {
-                output.textContent += `Neznámý příkaz: ${command}\n`;
+            const [action, param] = command.split(' ');
+            switch (action) {
+                case 'KROK': {
+                    const steps = parseInt(param) || 1;
+                    moveKarel(steps);
+                    break;
+                }
+                case 'VLEVOBOK': {
+                    const turns = parseInt(param) || 1;
+                    turnLeft(turns);
+                    break;
+                }
+                case 'POLOZ': {
+                    const item = param || '';
+                    placeItem(item);
+                    break;
+                }
+                case 'ERASE': {
+                    eraseItem();
+                    break;
+                }
+                case 'ZVYRAZNI': {
+                    const color = param || 'YELLOW';
+                    highlightCell(color);
+                    break;
+                }
+                case 'RESET': {
+                    resetGame();
+                    break;
+                }
+                default: {
+                    output.textContent += `Neznámý příkaz: ${command}\n`;
+                    break;
+                }
             }
         }
 
@@ -367,7 +383,7 @@
             }
         }
 
-        // Initialize game
+       
         createGrid();
     </script>
 </body>
