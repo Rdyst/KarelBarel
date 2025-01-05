@@ -22,36 +22,43 @@ Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
 Místo více `if-else` bloků jsou příkazy zpracovávány pomocí struktury `switch` pro větší přehlednost a rychlost myslim 
 napad od pana Bubilka po jeho zmínění switche pri hodině:
 
-```javascript
-function processCommand(command) {
-    switch (true) {
-        case command.startsWith('KROK'):
-            const steps = parseInt(command.split(' ')[1]) || 1;
-            moveKarel(steps);
-            break;
-        case command.startsWith('VLEVOBOK'):
-            const turns = parseInt(command.split(' ')[1]) || 1;
-            turnLeft(turns);
-            break;
-        case command.startsWith('POLOZ'):
-            const item = command.split(' ')[1] || '';
-            placeItem(item);
-            break;
-        case command === 'ERASE':
-            eraseItem();
-            break;
-        case command.startsWith('ZVYRAZNI'):
-            const color = command.split(' ')[1] || 'YELLOW';
-            highlightCell(color);
-            break;
-        case command === 'RESET':
-            resetGame();
-            break;
-        default:
-            output.textContent += `Neznámý příkaz: ${command}\n`;
-            break;
-    }
-}
+```function processCommand(command) {
+            const [action, param] = command.split(' ');
+            switch (action) {
+                case 'KROK': {
+                    const steps = parseInt(param) || 1;
+                    moveKarel(steps);
+                    break;
+                }
+                case 'VLEVOBOK': {
+                    const turns = parseInt(param) || 1;
+                    turnLeft(turns);
+                    break;
+                }
+                case 'POLOZ': {
+                    const item = param || '';
+                    placeItem(item);
+                    break;
+                }
+                case 'ERASE': {
+                    eraseItem();
+                    break;
+                }
+                case 'ZVYRAZNI': {
+                    const color = param || 'YELLOW';
+                    highlightCell(color);
+                    break;
+                }
+                case 'RESET': {
+                    resetGame();
+                    break;
+                }
+                default: {
+                    output.textContent += `Neznámý příkaz: ${command}\n`;
+                    break;
+                }
+            }
+        }
 ```
 
 ### Zvýrazňování políček
