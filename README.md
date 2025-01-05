@@ -19,7 +19,7 @@ Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
 ## Klíčové části kódu
 
 ### Zpracování příkazů pomocí `switch`
-Místo více `if-else` bloků jsou příkazy zpracovávány pomocí struktury `switch` pro větší přehlednost a udržovatelnost
+Místo více `if-else` bloků jsou příkazy zpracovávány pomocí struktury `switch` pro větší přehlednost a rychlost myslim 
 napad od pana Bubilka po jeho zmínění switche pri hodině:
 
 ```javascript
