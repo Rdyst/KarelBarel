@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Karelson</title>
     <style>
-          body {
+        body {
             font-family: Arial, sans-serif;
             display: flex;
             flex-direction: row;
@@ -65,8 +65,6 @@
 
         #game-container {
             display: grid;
-            grid-template-columns: repeat(10, 40px);
-            grid-template-rows: repeat(10, 40px);
             gap: 5px;
             justify-content: center;
             background-color: #ccc;
@@ -167,11 +165,20 @@
             background-color: #007bff;
             color: white;
         }
+
+        #grid-size-input {
+            margin-bottom: 20px;
+        }
     </style>
 </head>
 <body>
     <div id="sidebar">
         <h1>Karel neni Barel</h1>
+        <div id="grid-size-input">
+            <label for="gridSize">Velikost mřížky:</label>
+            <input type="number" id="gridSize" min="5" max="20" value="10">
+            <button onclick="setGridSize()">Nastavit</button>
+        </div>
         <textarea id="commands" placeholder="Zadejte příkazy"></textarea>
         <button onclick="executeCommands()">Spustit</button>
         <button onclick="resetGame()">Reset</button>
@@ -223,17 +230,30 @@
     </div>
 
     <script>
-        const GRID_SIZE = 10;
+        let GRID_SIZE = 10;
         const gameContainer = document.getElementById('game-container');
         const output = document.getElementById('output');
         const commandsInput = document.getElementById('commands');
         const historyList = document.getElementById('history-list');
 
         let karel = { x: 0, y: 0, direction: 'right' }; // initial position and direction
-        let grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
+        let grid = [];
+
+        function setGridSize() {
+            const newSize = parseInt(document.getElementById('gridSize').value);
+            if (newSize >= 5 && newSize <= 20) {
+                GRID_SIZE = newSize;
+                resetGame();
+            } else {
+                alert('Velikost mřížky musí být mezi 5 a 20!');
+            }
+        }
 
         function createGrid() {
             gameContainer.innerHTML = '';
+            gameContainer.style.gridTemplateColumns = `repeat(${GRID_SIZE}, 40px)`;
+            gameContainer.style.gridTemplateRows = `repeat(${GRID_SIZE}, 40px)`;
+            grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
             for (let y = 0; y < GRID_SIZE; y++) {
                 for (let x = 0; x < GRID_SIZE; x++) {
                     const cell = document.createElement('div');
@@ -259,7 +279,6 @@
 
         function resetGame() {
             karel = { x: 0, y: 0, direction: 'right' };
-            grid = Array.from({ length: GRID_SIZE }, () => Array(GRID_SIZE).fill(null));
             createGrid();
             output.textContent = '';
             commandsInput.value = '';
@@ -271,44 +290,29 @@
             output.textContent = '';
             for (const command of commands) {
                 processCommand(command);
-                addToHistory(command);
             }
             updateKarelPosition();
         }
 
-        function addToHistory(command) {
-            const li = document.createElement('li');
-            li.textContent = command;
-            historyList.appendChild(li);
-        }
-
         function processCommand(command) {
-            switch (true) {
-                case command.startsWith('KROK'):
-                    const steps = parseInt(command.split(' ')[1]) || 1;
-                    moveKarel(steps);
-                    break;
-                case command.startsWith('VLEVOBOK'):
-                    const turns = parseInt(command.split(' ')[1]) || 1;
-                    turnLeft(turns);
-                    break;
-                case command.startsWith('POLOZ'):
-                    const item = command.split(' ')[1] || '';
-                    placeItem(item);
-                    break;
-                case command === 'ERASE':
-                    eraseItem();
-                    break;
-                case command.startsWith('ZVYRAZNI'):
-                    const color = command.split(' ')[1] || 'YELLOW';
-                    highlightCell(color);
-                    break;
-                case command === 'RESET':
-                    resetGame();
-                    break;
-                default:
-                    output.textContent += `Neznámý příkaz: ${command}\n`;
-                    break;
+            if (command.startsWith('KROK')) {
+                const steps = parseInt(command.split(' ')[1]) || 1;
+                moveKarel(steps);
+            } else if (command.startsWith('VLEVOBOK')) {
+                const turns = parseInt(command.split(' ')[1]) || 1;
+                turnLeft(turns);
+            } else if (command.startsWith('POLOZ')) {
+                const item = command.split(' ')[1] || '';
+                placeItem(item);
+            } else if (command === 'ERASE') {
+                eraseItem();
+            } else if (command.startsWith('ZVYRAZNI')) {
+                const color = command.split(' ')[1] || 'YELLOW';
+                highlightCell(color);
+            } else if (command === 'RESET') {
+                resetGame();
+            } else {
+                output.textContent += `Neznámý příkaz: ${command}\n`;
             }
         }
 
