@@ -1,7 +1,7 @@
 # Karel
 
 Tenhle projekt je vzdelavaci (robot?) jménem Karel kterej neni barel. Mužete zadávat textové příkazy pro řízení pohybů, orientace a interakce Karla s mřížkou.
-
+Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
 ## Funkce
 
 1. **Navigace na mřížce**: Karel operuje na mřížce 10x10 a pohybuje se krok za krokem podle zadaných příkazů.
