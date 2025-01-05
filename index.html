@@ -236,7 +236,7 @@
         const commandsInput = document.getElementById('commands');
         const historyList = document.getElementById('history-list');
 
-        let karel = { x: 0, y: 0, direction: 'right' }; 
+        let karel = { x: 0, y: 0, direction: 'right' }; // initial position and direction
         let grid = [];
 
         function setGridSize() {
@@ -364,6 +364,7 @@
             const cell = document.getElementById(`cell-${karel.x}-${karel.y}`);
             if (cell) {
                 cell.textContent = '';
+                cell.classList.remove('highlighted-yellow', 'highlighted-red', 'highlighted-green', 'highlighted-blue');
             }
         }
 
@@ -383,7 +384,7 @@
             }
         }
 
-       
+        // Initialize game
         createGrid();
     </script>
 </body>
