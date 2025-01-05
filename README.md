@@ -1,6 +1,6 @@
 # Karel
 
-Tenhle projekt je vzdelavaci (robot?) jménem Karel kterej neni barel. Mužete zadávat textové příkazy pro řízení pohybů, orientace a interakce Karla s mřížkou.
+Tenhle projekt je vzdelavaci (robot?) jménem Karel kterej neni barel. Mužete zadávat textové příkazy pro řízení pohybů, orientace a interakce Karla s políčky gridu.
 Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
 ## Funkce
 
