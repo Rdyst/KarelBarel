@@ -67,8 +67,8 @@ function highlightCell(color) {
 }
 ```
 
-### Inicializace mřížky
-Mřížka je dynamicky vytvořena a aktualizována při pohybu Karla:
+### Inicializace gridu
+Grid je dynamicky vytvořena a aktualizována při pohybu Karla:
 
 ```javascript
 function createGrid() {
