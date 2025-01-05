@@ -1,7 +1,7 @@
 # Karel
 
 Tenhle projekt je vzdelavaci (robot?) jménem Karel kterej neni barel. Mužete zadávat textové příkazy pro řízení pohybů, orientace a interakce Karla s políčky gridu.
-Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/
+Vyzkoušet si ho mužete zde https://rdyst.github.io/KarelBarel/ (hitorie z nejakeho duvodu nefunguje na githubu)
 ## Funkce
 
 1. **Navigace gridu a velikost**: Karel operuje na gridu 5-20 na druhou a pohybuje se krok za krokem podle zadaných příkazů.
