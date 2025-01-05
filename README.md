@@ -23,43 +23,48 @@ Místo více `if-else` bloků jsou příkazy zpracovávány pomocí struktury `s
 napad od pana Bubilka po jeho zmínění switche pri hodině:
 
 ```javascript
-function processCommand(command) {
+        function processCommand(command) {
             const [action, param] = command.split(' ');
-            switch (action) {
-                case 'KROK': {
-                    const steps = parseInt(param) || 1;
-                    moveKarel(steps);
-                    break;
-                }
-                case 'VLEVOBOK': {
-                    const turns = parseInt(param) || 1;
-                    turnLeft(turns);
-                    break;
-                }
-                case 'POLOZ': {
-                    const item = param || '';
-                    placeItem(item);
-                    break;
-                }
-                case 'ERASE': {
-                    eraseItem();
-                    break;
-                }
-                case 'ZVYRAZNI': {
-                    const color = param || 'YELLOW';
-                    highlightCell(color);
-                    break;
-                }
-                case 'RESET': {
-                    resetGame();
-                    break;
-                }
-                default: {
-                    output.textContent += `Neznámý příkaz: ${command}\n`;
-                    break;
-                }
-            }
+            const listItem = document.createElement('li'); 
+            listItem.textContent = command; 
+            historyList.appendChild(listItem); 
+
+    switch (action) {
+        case 'KROK': {
+            const steps = parseInt(param) || 1;
+            moveKarel(steps);
+            break;
         }
+        case 'VLEVOBOK': {
+            const turns = parseInt(param) || 1;
+            turnLeft(turns);
+            break;
+        }
+        case 'POLOZ': {
+            const item = param || '';
+            placeItem(item);
+            break;
+        }
+        case 'ERASE': {
+            eraseItem();
+            break;
+        }
+        case 'ZVYRAZNI': {
+            const color = param || 'YELLOW';
+            highlightCell(color);
+            break;
+        }
+        case 'RESET': {
+            resetGame();
+            break;
+        }
+        default: {
+            output.textContent += `Neznámý příkaz: ${command}\n`;
+            break;
+        }
+    }
+}
+
 ```
 
 ### Zvýrazňování políček
